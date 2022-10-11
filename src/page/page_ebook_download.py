@@ -1,16 +1,13 @@
 from selenium.webdriver.common.by import By
+from src.extract_element_from_url import extract_filename
 from time import sleep
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class PageDownloadEbook:
 
     def __init__(self, driver):
         self.driver = driver
-        self._ebook_filename = None
-
-    @property
-    def ebook_filename(self):
-        return self._ebook_filename
 
     def enter_name(self, name: str) -> None:
         """ Enters name and surname in the "Name and Surname" label
@@ -19,10 +16,7 @@ class PageDownloadEbook:
             name (str): Username and surname as one string.
 
         """
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="uspForm"]/div[1]/div[1]/div/input').send_keys(name)
-        except Exception:
-            raise
+        self.driver.find_element(By.XPATH, '//*[@id="uspForm"]//input[@name="name"]').send_keys(name)
 
     def enter_email(self, email: str) -> None:
         """ Enters email in the "Business email" label
@@ -31,10 +25,7 @@ class PageDownloadEbook:
             email (str): User email.
 
         """
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="email"]').send_keys(email)
-        except Exception:
-            raise
+        self.driver.find_element(By.XPATH, '//*[@id="email"]').send_keys(email)
 
     def enter_company(self, company: str) -> None:
         """ Enters company name in the "Company" label
@@ -43,10 +34,7 @@ class PageDownloadEbook:
             company (str): Name of the user's company.
 
         """
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="company"]/div/input').send_keys(company)
-        except Exception:
-            raise
+        self.driver.find_element(By.XPATH, '//*[@id="company"]//input').send_keys(company)
 
     def enter_website(self, website: str) -> None:
         """ Enters website url in the "Website URL" label
@@ -55,10 +43,7 @@ class PageDownloadEbook:
             website(str): User's website address.
 
         """
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="uspForm"]/div[1]/div[5]/div/input').send_keys(website)
-        except Exception:
-            raise
+        self.driver.find_element(By.XPATH, '//*[@id="uspForm"]//input[@name="url"]').send_keys(website)
 
     def enter_phone(self, phone: str) -> None:
         """ Enters phone number in the "Phone number" label
@@ -67,41 +52,26 @@ class PageDownloadEbook:
             phone(str): User's telephone number.
 
         """
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="phoneNumber"]').send_keys(phone)
-        except Exception:
-            raise
+        self.driver.find_element(By.XPATH, '//*[@id="phoneNumber"]').send_keys(phone)
 
-    def click_button_download(self) -> None:
+    def click_button_get_for_free(self) -> None:
         """ Clicks the download button
 
         """
-        try:
-            self.driver.find_element(By.XPATH, '//*[@id="uspForm"]/div[2]/div/button').click()
-        except Exception:
-            raise
+        self.driver.find_element(By.XPATH, '//*[@id="uspForm"]//button').click()
 
-    def click_button_download_here(self) -> None:
+    def click_button_download_here(self) -> str:
         """ Clicks the download here button
 
+        Return:
+            filename(str): Download filename
         """
-        try:
-            element = self.driver.find_element(By.XPATH, '/html/body/main/div[2]/div/div[2]/div[2]/div/div/a[1]')
+        element = self.driver.find_element(By.XPATH, '//*[@id="thanks-message"]//a[1]')
+        self.driver.execute_script("arguments[0].scrollIntoViewIfNeeded(true);", element)
+        element.click()
 
-            self.driver.implicitly_wait(5)
-            self._ebook_filename = self.extract_filename(element.get_attribute('href'))  # set ebook filename
+        return extract_filename(element.get_attribute('href'))
 
-            # element it is hide under chatbot, selenium can not click on it
-            self.driver.execute_script("arguments[0].click();", element)
-
-        except Exception:
-            raise
-
-    @staticmethod
-    def sleep_some_time(sec):
-        sleep(sec)
-
-    @staticmethod
-    def extract_filename(link: str) -> str:
-        name = link.split('/')[-1]
-        return name
+    def hide_chatbot(self) -> None:
+        element = self.driver.find_element(By.XPATH, '//*[@id="hubspot-messages-iframe-container"]')
+        self.driver.execute_script("arguments[0].style.visibility='collapse';", element)

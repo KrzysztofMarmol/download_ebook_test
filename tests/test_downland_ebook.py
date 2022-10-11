@@ -4,6 +4,7 @@ from src.download_ebook import download_ebook, chrome_options
 import os.path
 
 
+# folder w projekcie
 @pytest.fixture()
 def file_directories():
     dir = os.path.dirname(os.getcwd()) + "/tmp"
@@ -14,7 +15,7 @@ def file_directories():
 
 @pytest.fixture()
 def website():
-    return "https://www.salesmanago.pl/info/recession-survival.htm"
+    return "https://www.salesmanago.com/info/recession-survival.htm"
 
 
 @pytest.fixture()
@@ -32,5 +33,6 @@ def driver(website, options):
 
 
 def test_download_ebook(driver, file_directories):
-    file_name = download_ebook(driver)
-    assert os.path.isfile(f"{file_directories}/{file_name}")
+    filename = download_ebook(driver)
+    print(filename)
+    assert os.path.isfile(f"{file_directories}/{filename}")
