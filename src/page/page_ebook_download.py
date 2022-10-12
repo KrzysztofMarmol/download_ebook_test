@@ -1,7 +1,5 @@
 from selenium.webdriver.common.by import By
 from src.extract_element_from_url import extract_filename
-from time import sleep
-from selenium.webdriver.common.action_chains import ActionChains
 
 
 class PageDownloadEbook:

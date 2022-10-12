@@ -1,9 +1,14 @@
 from src.page.page_ebook_download import PageDownloadEbook
+from src.page.page_ebook import PageEbook
 from time import sleep
 
 
-def download_ebook(driver) -> str:
+def download_ebook(driver, url) -> str:
     website = PageDownloadEbook(driver)
+    ebook = PageEbook(driver)
+    ebook.click_ebook(url)
+    sleep(1)
+    driver.switch_to.window(driver.window_handles[1])
     website.enter_name("Jan Kowalski")
     website.enter_email("jkowalski.benhauer+testrektutacja@selesmanago.com")
     website.enter_website("xyz.pl")
@@ -20,9 +25,9 @@ def download_ebook(driver) -> str:
 def chrome_options(options, path):
     options.add_experimental_option('prefs', {
         "download.default_directory": path,  # Changed default directory for download
-        #"download.prompt_for_download": False,  # To auto download the file
+        "download.prompt_for_download": False,  # To auto download the file
         "download.directory_upgrade": True,
-        #"plugins.always_open_pdf_externally": True,  # It will not show PDF in chrome
+        "plugins.always_open_pdf_externally": True,  # It will not show PDF in chrome
         "profile.default_content_setting_values.cookies": 2
     })
     return options
