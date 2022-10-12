@@ -1,5 +1,7 @@
 from selenium.webdriver.common.by import By
 from src.extract_element_from_url import extract_filename
+from urllib.parse import unquote
+from selenium.common.exceptions import NoSuchElementException
 
 
 class PageDownloadEbook:
@@ -32,7 +34,10 @@ class PageDownloadEbook:
             company (str): Name of the user's company.
 
         """
-        self.driver.find_element(By.XPATH, '//*[@id="company"]//input').send_keys(company)
+        try:
+            self.driver.find_element(By.XPATH, '//*[@id="company"]//input').send_keys(company)
+        except NoSuchElementException:
+            self.driver.find_element(By.XPATH, '//*[@id="company"]').send_keys(company)
 
     def enter_website(self, website: str) -> None:
         """ Enters website url in the "Website URL" label
@@ -64,11 +69,14 @@ class PageDownloadEbook:
         Return:
             filename(str): Download filename
         """
-        element = self.driver.find_element(By.XPATH, '//*[@id="thanks-message"]//a[1]')
+        try:
+            element = self.driver.find_element(By.XPATH, '//*[@class="thanks-message"]//a[1]')
+        except NoSuchElementException:
+            element = self.driver.find_element(By.XPATH, '//*[@class="ebookcontainer__img--buttoncontainer"]//a[@href]')
+
         self.driver.execute_script("arguments[0].scrollIntoViewIfNeeded(true);", element)
         element.click()
-
-        return extract_filename(element.get_attribute('href'))
+        return unquote(extract_filename(element.get_attribute('href')))
 
     def hide_chatbot(self) -> None:
         element = self.driver.find_element(By.XPATH, '//*[@id="hubspot-messages-iframe-container"]')

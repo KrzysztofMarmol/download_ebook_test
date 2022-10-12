@@ -1,22 +1,17 @@
 import pytest
-from selenium import webdriver
-from src.download_ebook import download_ebook, chrome_options
+from src.driver import chrome_driver
 import os.path
 from pathlib import Path
+from tests.ebooks_list import ebooks_list_from_file
 
 
 @pytest.fixture()
 def ebooks_list():
-    path = Path(__file__).parent / "Ebook_list.txt"
-    f = open(path, 'r')
-    list_ebooks = [line.rstrip() for line in f.readlines()]
-    f.close()
-    return list_ebooks
+    return ebooks_list_from_file()
 
 
-# folder w projekcie
 @pytest.fixture()
-def file_directories():
+def temporary_path():
     dir = os.path.dirname(os.getcwd()) + "/tmp"
     yield dir
     for f in os.listdir(dir):
@@ -29,14 +24,8 @@ def website():
 
 
 @pytest.fixture()
-def driver(website, options):
-    driver = webdriver.Chrome(options=options)
+def driver(temporary_path, website):
+    driver = chrome_driver(temporary_path)
     driver.get(website)
     yield driver
     driver.quit()
-
-
-@pytest.fixture()
-def options(file_directories):
-    options = chrome_options(webdriver.ChromeOptions(), file_directories)
-    return options
