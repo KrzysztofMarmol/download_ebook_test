@@ -1,7 +1,7 @@
 from selenium import webdriver
 
 
-def chrome_driver(path):
+def create_chrome_driver(path=None):
     """ Creates a webdriver with experimental_option
 
     Args:

@@ -1,3 +1,3 @@
 def extract_filename(url: str) -> str:
-    name = [s for s in url.replace("?", "/").split('/') if ".pdf" in s][0]
+    name = url.split('/')[-1].split("?")[0].replace("_download", "_ebook")
     return name

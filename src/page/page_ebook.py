@@ -1,11 +1,12 @@
 from selenium.webdriver.common.by import By
-# from src.extract_element_from_url import extract_filename
+from src.page.page import Page
 
 
-class PageEbook:
+class PageEbook(Page):
+    PAGE_URL = "https://www.salesmanago.com/info/knowledgecenter.htm"
 
-    def __init__(self, driver):
-        self.driver = driver
+    def open_website(self):
+        self.driver.get(self.PAGE_URL)
 
     def click_ebook(self, href: str) -> None:
         """ Clicks the ebook containing the link
@@ -20,12 +21,8 @@ class PageEbook:
         """ Find existing ebooks
 
             Return:
-                hrefs (list): Ebook link list
+                (list): Ebooks link list
 
         """
         elements = self.driver.find_elements(By.XPATH, "//*[@class='col-lg-3 ebook__text']//a[@href]")
-        hrefs = []
-        for element in elements:
-            hrefs.append(element.get_attribute('href'))
-
-        return hrefs
+        return [element.get_attribute('href') for element in elements]

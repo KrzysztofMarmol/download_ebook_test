@@ -2,13 +2,10 @@ from selenium.webdriver.common.by import By
 from src.extract_element_from_url import extract_filename
 from urllib.parse import unquote
 from selenium.common.exceptions import NoSuchElementException
+from src.page.page import Page
 
 
-class PageDownloadEbook:
-
-    def __init__(self, driver):
-        self.driver = driver
-
+class PageDownloadEbook(Page):
     def enter_name(self, name: str) -> None:
         """ Enters name and surname in the "Name and Surname" label
 
@@ -35,9 +32,11 @@ class PageDownloadEbook:
 
         """
         try:
-            self.driver.find_element(By.XPATH, '//*[@id="company"]//input').send_keys(company)
+            element = self.driver.find_element(By.XPATH, '//*[@id="company"]//input')
         except NoSuchElementException:
-            self.driver.find_element(By.XPATH, '//*[@id="company"]').send_keys(company)
+            element = self.driver.find_element(By.XPATH, '//*[@id="company"]')
+
+        element.send_keys(company)
 
     def enter_website(self, website: str) -> None:
         """ Enters website url in the "Website URL" label
